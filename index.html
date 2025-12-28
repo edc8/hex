@@ -2,36 +2,154 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>hex 导航页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Hex 导航</title>
     <style>
-        :root { --ios-bg: #F2F2F7; --ios-card: rgba(255, 255, 255, 0.8); --ios-text: #1C1C1E; --ios-blue: #007AFF; }
-        body { background: var(--ios-bg); font-family: -apple-system, sans-serif; padding: 40px 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .category-section { margin-bottom: 30px; }
-        .category-title { font-size: 20px; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; }
-        .category-title::before { content: ""; width: 4px; height: 18px; background: var(--ios-blue); margin-right: 10px; border-radius: 2px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
-        .card { background: var(--ios-card); backdrop-filter: blur(20px); border-radius: 22px; padding: 18px; text-decoration: none; color: inherit; border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: 0.2s; }
-        .card:active { transform: scale(0.92); }
-        .icon { width: 48px; height: 48px; border-radius: 12px; margin-bottom: 12px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .icon img { width: 28px; height: 28px; object-fit: contain; }
-        .card-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .card-desc { font-size: 12px; color: #8E8E93; height: 32px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-        #loader { text-align: center; margin-top: 50px; color: #8E8E93; }
+        :root {
+            --ios-bg: #F2F2F7;
+            --ios-card: rgba(255, 255, 255, 0.7);
+            --ios-text: #000000;
+            --ios-subtext: #8E8E93;
+            --ios-blue: #007AFF;
+            --card-radius: 20px;
+        }
+
+        /* 深色模式适配 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ios-bg: #000000;
+                --ios-card: rgba(28, 28, 30, 0.7);
+                --ios-text: #FFFFFF;
+                --ios-subtext: #8E8E93;
+            }
+        }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+        body { 
+            background: var(--ios-bg); 
+            color: var(--ios-text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0;
+            padding: 20px 16px;
+            line-height: 1.4;
+        }
+
+        .container { max-width: 600px; margin: 0 auto; padding-top: 20px; }
+
+        header { margin-bottom: 24px; padding-left: 4px; }
+        header h1 { font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+
+        .category-section { margin-bottom: 32px; }
+        .category-title { 
+            font-size: 17px; 
+            font-weight: 600; 
+            margin-bottom: 12px; 
+            padding-left: 4px;
+            color: var(--ios-subtext);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 移动端网格优化：固定两列 */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+        }
+
+        .card { 
+            background: var(--ios-card); 
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border-radius: var(--card-radius); 
+            padding: 16px; 
+            text-decoration: none; 
+            color: inherit; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* 点击反馈：iOS 风格的微小缩小和变暗 */
+        .card:active { 
+            transform: scale(0.95); 
+            background: rgba(150, 150, 150, 0.2);
+        }
+
+        .icon { 
+            width: 44px; 
+            height: 44px; 
+            border-radius: 10px; 
+            margin-bottom: 12px; 
+            background: #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .icon img { width: 100%; height: 100%; object-fit: cover; }
+
+        .card-title { 
+            font-size: 15px; 
+            font-weight: 600; 
+            margin-bottom: 4px; 
+            width: 100%;
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+        }
+        .card-desc { 
+            font-size: 12px; 
+            color: var(--ios-subtext); 
+            height: 34px; 
+            line-height: 1.4;
+            overflow: hidden; 
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+        }
+
+        /* 加载动画 */
+        .loading-spinner {
+            display: inline-block;
+            width: 24px; height: 24px;
+            border: 3px solid rgba(142, 142, 147, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--ios-blue);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        #loader { 
+            text-align: center; 
+            padding: 100px 0; 
+            color: var(--ios-subtext);
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 style="font-size: 34px; margin-bottom: 30px;"></h1>
-        <div id="main"><div id="loader">正在同步 GitHub 节点...</div></div>
+        <header>
+            <h1>Hex 发现</h1>
+        </header>
+        <div id="main">
+            <div id="loader">
+                <div class="loading-spinner"></div>
+                <div>正在同步节点...</div>
+            </div>
+        </div>
     </div>
 
     <script>
         const GITHUB_CONFIG = { user: 'edc8', repo: 'hex' };
 
         async function init() {
-            // 尝试多个 API 节点：1. 官方 API  2. GitMirror 镜像
             const nodes = [
                 `https://api.github.com/repos/${GITHUB_CONFIG.user}/${GITHUB_CONFIG.repo}/issues?state=open`,
                 `https://api.gitmirror.com/repos/${GITHUB_CONFIG.user}/${GITHUB_CONFIG.repo}/issues?state=open`
@@ -45,27 +163,24 @@
                     const res = await fetch(url);
                     if (res.ok) {
                         issues = await res.json();
-                        break; // 成功获取则跳出循环
+                        break;
                     }
-                } catch (e) {
-                    errorMsg = e.message;
-                }
+                } catch (e) { errorMsg = e.message; }
             }
 
             if (!issues) {
-                document.getElementById('loader').innerHTML = `加载失败<br><small style="color:red">错误原因: ${errorMsg || '网络连接超时'}</small><br><br>请确保仓库已设为 Public`;
+                document.getElementById('loader').innerHTML = `加载失败<br><small style="color:#FF3B30">错误: ${errorMsg || '网络超时'}</small>`;
                 return;
             }
 
             const groups = {};
             issues.forEach(issue => {
-                // 健壮性修复：防止没有 Label 或 Body 时报错
-                const category = (issue.labels && issue.labels.length > 0) ? issue.labels[0].name : '未分类';
+                const category = (issue.labels && issue.labels.length > 0) ? issue.labels[0].name : '常用';
                 if (!groups[category]) groups[category] = [];
                 
                 const lines = issue.body ? issue.body.split('\n') : [];
                 const url = lines[0]?.trim() || '#';
-                const desc = lines.slice(1).join(' ').trim() || '快捷链接';
+                const desc = lines.slice(1).join(' ').trim() || '查看详情';
                 
                 let domain = '';
                 try { if(url.startsWith('http')) domain = new URL(url).hostname; } catch(e) {}
@@ -83,19 +198,30 @@
         function render(groups) {
             const main = document.getElementById('main');
             main.innerHTML = '';
+            
             if (Object.keys(groups).length === 0) {
-                main.innerHTML = '<div id="loader">仓库中没有找到 Open 的 Issues。</div>';
+                main.innerHTML = '<div id="loader">暂无收藏内容</div>';
                 return;
             }
+
             for (const cat in groups) {
                 const section = document.createElement('div');
                 section.className = 'category-section';
-                section.innerHTML = `<div class="category-title">${cat}</div><div class="grid">${groups[cat].map(item => `
+                
+                const cardsHtml = groups[cat].map(item => `
                     <a href="${item.url}" class="card" target="_blank">
-                        <div class="icon"><img src="${item.icon}" onerror="this.src='https://github.githubassets.com/favicons/favicon.svg'"></div>
+                        <div class="icon">
+                            <img src="${item.icon}" loading="lazy" onerror="this.src='https://github.githubassets.com/favicons/favicon.svg'">
+                        </div>
                         <div class="card-title">${item.title}</div>
                         <div class="card-desc">${item.desc}</div>
-                    </a>`).join('')}</div>`;
+                    </a>
+                `).join('');
+
+                section.innerHTML = `
+                    <div class="category-title">${cat}</div>
+                    <div class="grid">${cardsHtml}</div>
+                `;
                 main.appendChild(section);
             }
         }
