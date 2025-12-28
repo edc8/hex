@@ -1,1 +1,0 @@
-var user = "edc-8888i";
