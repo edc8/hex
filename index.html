@@ -3,159 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>hex 导航页>hex>he'
-    
-    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/normalize/8.0.1/normalize.min.css">
-    
+    <title>我的导航</title>
     <style>
-        :root {
-            --ios-bg: #F2F2F7;
-            --ios-card: rgba(255, 255, 255, 0.75);
-            --ios-text: #1C1C1E;
-            --ios-secondary: #8E8E93;
-            --ios-blue: #007AFF;
-        }
-
-        body {
-            background-color: var(--ios-bg);
-            background-image: radial-gradient(circle at 10% 10%, #e8e8ff 0%, transparent 40%),
-                              radial-gradient(circle at 90% 90%, #fff0f0 0%, transparent 40%);
-            background-attachment: fixed;
-            /* 强制优先使用系统级中文字体 */
-            font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-            margin: 0;
-            padding: 40px 20px;
-        }
-
+        :root { --ios-bg: #F2F2F7; --ios-card: rgba(255, 255, 255, 0.8); --ios-text: #1C1C1E; --ios-blue: #007AFF; }
+        body { background: var(--ios-bg); font-family: -apple-system, sans-serif; padding: 40px 20px; }
         .container { max-width: 800px; margin: 0 auto; }
-        .header { margin-bottom: 30px; }
-        .header h1 { font-size: 34px; font-weight: 800; margin: 0; letter-spacing: -1px; }
-
-        .category-section { margin-bottom: 35px; }
-        .category-title {
-            font-size: 20px; font-weight: 700; margin: 0 0 15px 5px;
-            display: flex; align-items: center;
-        }
-        .category-title::before {
-            content: ""; width: 4px; height: 18px; background: var(--ios-blue);
-            margin-right: 10px; border-radius: 2px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-            gap: 16px;
-        }
-
-        /* iOS 风格卡片优化：增加硬件加速，减少卡顿 */
-        .card {
-            background: var(--ios-card);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border-radius: 22px;
-            padding: 18px;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-            transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
-            will-change: transform;
-        }
-
+        .category-section { margin-bottom: 30px; }
+        .category-title { font-size: 20px; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; }
+        .category-title::before { content: ""; width: 4px; height: 18px; background: var(--ios-blue); margin-right: 10px; border-radius: 2px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+        .card { background: var(--ios-card); backdrop-filter: blur(20px); border-radius: 22px; padding: 18px; text-decoration: none; color: inherit; border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: 0.2s; }
         .card:active { transform: scale(0.92); }
-
-        .icon {
-            width: 48px; height: 48px; border-radius: 12px; margin-bottom: 12px;
-            background: #fff; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.06); overflow: hidden;
-        }
-        .icon img { width: 30px; height: 30px; object-fit: contain; }
-
+        .icon { width: 48px; height: 48px; border-radius: 12px; margin-bottom: 12px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .icon img { width: 28px; height: 28px; object-fit: contain; }
         .card-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .card-desc { font-size: 12px; color: var(--ios-secondary); line-height: 1.3; height: 32px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-
-        #loader { text-align: center; margin-top: 50px; color: var(--ios-secondary); }
+        .card-desc { font-size: 12px; color: #8E8E93; height: 32px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        #loader { text-align: center; margin-top: 50px; color: #8E8E93; }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <div class="header">
-            <h1>我的收藏</h1>
-        </div>
-        <div id="main"><div id="loader">连接高速节点中...</div></div>
+        <h1 style="font-size: 34px; margin-bottom: 30px;">收藏</h1>
+        <div id="main"><div id="loader">正在同步 GitHub 节点...</div></div>
     </div>
 
     <script>
-        const GITHUB_CONFIG = {
-            user: 'edc8',
-            repo: 'hex'
-        };
+        const GITHUB_CONFIG = { user: 'edc8', repo: 'hex' };
 
-        async function initNav() {
-            try {
-                // 3. API 请求增加缓存策略，减少对 GitHub 的直接依赖次数
-                const response = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.user}/${GITHUB_CONFIG.repo}/issues?state=open&per_page=100`, {
-                    cache: 'force-cache' // 强制浏览器利用本地缓存
-                });
-                
-                if (!response.ok) throw new Error();
-                const issues = await response.json();
-                
-                const groups = {};
-                issues.forEach(issue => {
-                    const category = issue.labels[0]?.name || '默认';
-                    if (!groups[category]) groups[category] = [];
-                    
-                    const lines = issue.body ? issue.body.split('\n') : [];
-                    const url = lines[0]?.trim() || '#';
-                    const desc = lines.slice(1).join(' ').trim() || 'Quick Link';
-                    
-                    let domain = '';
-                    try { domain = new URL(url).hostname; } catch(e) {}
+        async function init() {
+            // 尝试多个 API 节点：1. 官方 API  2. GitMirror 镜像
+            const nodes = [
+                `https://api.github.com/repos/${GITHUB_CONFIG.user}/${GITHUB_CONFIG.repo}/issues?state=open`,
+                `https://api.gitmirror.com/repos/${GITHUB_CONFIG.user}/${GITHUB_CONFIG.repo}/issues?state=open`
+            ];
 
-                    groups[category].push({
-                        title: issue.title,
-                        url: url,
-                        desc: desc,
-                        // 4. 图标源优化：Google Favicon 可能被墙，备选使用国产 API 或 GitHub 官方
-                        icon: `https://favicon.splitbee.io/?url=${domain}` 
-                    });
-                });
+            let issues = null;
+            let errorMsg = "";
 
-                render(groups);
-            } catch (err) {
-                document.getElementById('loader').innerText = '数据同步失败，请刷新重试。';
+            for (let url of nodes) {
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) {
+                        issues = await res.json();
+                        break; // 成功获取则跳出循环
+                    }
+                } catch (e) {
+                    errorMsg = e.message;
+                }
             }
+
+            if (!issues) {
+                document.getElementById('loader').innerHTML = `加载失败<br><small style="color:red">错误原因: ${errorMsg || '网络连接超时'}</small><br><br>请确保仓库已设为 Public`;
+                return;
+            }
+
+            const groups = {};
+            issues.forEach(issue => {
+                // 健壮性修复：防止没有 Label 或 Body 时报错
+                const category = (issue.labels && issue.labels.length > 0) ? issue.labels[0].name : '未分类';
+                if (!groups[category]) groups[category] = [];
+                
+                const lines = issue.body ? issue.body.split('\n') : [];
+                const url = lines[0]?.trim() || '#';
+                const desc = lines.slice(1).join(' ').trim() || '快捷链接';
+                
+                let domain = '';
+                try { if(url.startsWith('http')) domain = new URL(url).hostname; } catch(e) {}
+
+                groups[category].push({
+                    title: issue.title,
+                    url: url,
+                    desc: desc,
+                    icon: domain ? `https://favicon.splitbee.io/?url=${domain}` : 'https://github.githubassets.com/favicons/favicon.svg'
+                });
+            });
+            render(groups);
         }
 
         function render(groups) {
             const main = document.getElementById('main');
             main.innerHTML = '';
+            if (Object.keys(groups).length === 0) {
+                main.innerHTML = '<div id="loader">仓库中没有找到 Open 的 Issues。</div>';
+                return;
+            }
             for (const cat in groups) {
                 const section = document.createElement('div');
                 section.className = 'category-section';
-                section.innerHTML = `
-                    <div class="category-title">${cat}</div>
-                    <div class="grid">
-                        ${groups[cat].map(item => `
-                            <a href="${item.url}" class="card" target="_blank">
-                                <div class="icon">
-                                    <img src="${item.icon}" onerror="this.src='https://github.githubassets.com/favicons/favicon.svg'">
-                                </div>
-                                <div class="card-title">${item.title}</div>
-                                <div class="card-desc">${item.desc}</div>
-                            </a>
-                        `).join('')}
-                    </div>
-                `;
+                section.innerHTML = `<div class="category-title">${cat}</div><div class="grid">${groups[cat].map(item => `
+                    <a href="${item.url}" class="card" target="_blank">
+                        <div class="icon"><img src="${item.icon}" onerror="this.src='https://github.githubassets.com/favicons/favicon.svg'"></div>
+                        <div class="card-title">${item.title}</div>
+                        <div class="card-desc">${item.desc}</div>
+                    </a>`).join('')}</div>`;
                 main.appendChild(section);
             }
         }
-
-        initNav();
+        init();
     </script>
 </body>
 </html>
