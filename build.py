@@ -1,37 +1,34 @@
 import requests
 import json
-import re
 from urllib.parse import urlparse
 
+# --- 配置区 ---
 USER = "edc8"
 REPO = "hex"
 FILE_NAME = "index.html"
 
-def build():
-    # 1. 抓取所有开启的 Issue
+# --- 1. 抓取 Issue 数据 ---
+def get_data():
     url = f"https://api.github.com/repos/{USER}/{REPO}/issues?state=open&per_page=100"
     res = requests.get(url)
     if res.status_code != 200:
-        print(f"API Error: {res.status_code}")
-        return
-
+        return None
+    
     issues = res.json()
     groups = {}
-    
     for issue in issues:
         if "pull_request" in issue: continue
-        
-        # 处理分类 (Label)
-        cat = issue['labels'][0]['name'] if (issue.get('labels') and len(issue['labels']) > 0) else 'MISC'
+        # 分类逻辑
+        cat = issue['labels'][0]['name'] if (issue.get('labels')) else 'MISC'
         if cat not in groups: groups[cat] = []
         
-        # 处理正文格式
+        # 提取链接和描述
         body = issue.get('body', '') or ''
         lines = body.split('\n')
-        link = lines[0].strip() if (lines and lines[0].strip()) else '#'
-        desc = " ".join(lines[1:]).strip() if len(lines) > 1 else "NO_DESCRIPTION"
+        link = lines[0].strip() if lines else '#'
+        desc = " ".join(lines[1:]).strip() or "NO_DATA_PROVIDED"
         
-        # 提取域名获取图标
+        # 获取图标
         domain = urlparse(link).netloc if "http" in link else ""
         icon = f"https://favicon.splitbee.io/?url={domain}" if domain else "https://github.githubassets.com/favicons/favicon.svg"
 
@@ -41,29 +38,86 @@ def build():
             "desc": desc,
             "icon": icon
         })
+    return groups
 
-    # 2. 读取 HTML 模板
-    with open(FILE_NAME, 'r', encoding='utf-8') as f:
-        content = f.read()
+# --- 2. 静态 HTML 模板 (包含你最初的所有样式) ---
+HTML_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>HEX / MATRIX</title>
+    <style>
+        :root { --bg: #000; --line: rgba(255,255,255,0.1); --accent: #fff; --text-main: #fff; --text-dim: #666; --h-height: 120px; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { background-color: var(--bg); background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 40px 40px; color: var(--text-main); font-family: 'Space Mono', monospace, "PingFang SC", sans-serif; margin: 0; padding: 0; min-height: 100vh; }
+        header { height: var(--h-height); display: flex; align-items: flex-end; padding: 20px; border-bottom: 1px solid var(--accent); margin-bottom: 40px; }
+        header h1 { font-size: clamp(24px, 8vw, 40px); font-weight: 900; margin: 0; text-transform: uppercase; line-height: 0.8; }
+        .container { padding: 0 20px 100px; max-width: 1200px; margin: 0 auto; }
+        .section { margin-bottom: 80px; display: grid; grid-template-columns: 60px 1fr; gap: 20px; }
+        .section-index { font-size: 14px; color: var(--accent); font-weight: bold; padding-top: 8px; }
+        .section-content h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.3em; color: var(--text-dim); margin: 0 0 30px 0; }
+        .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); border-top: 1px solid var(--line); }
+        .link-item { display: flex; flex-direction: column; padding: 24px 0; text-decoration: none; color: inherit; border-bottom: 1px solid var(--line); transition: all 0.3s ease; position: relative; }
+        .link-item:active { background: rgba(255, 255, 255, 0.05); padding-left: 10px; }
+        .link-header { display: flex; align-items: center; margin-bottom: 12px; }
+        .link-icon { width: 24px; height: 24px; margin-right: 15px; opacity: 0.8; filter: grayscale(1) invert(1); }
+        .link-title { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+        .link-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; max-width: 90%; }
+        @media (max-width: 600px) { .section { grid-template-columns: 1fr; gap: 5px; } .section-index { font-size: 10px; } header { height: 100px; } }
+    </style>
+</head>
+<body>
+    <header><h1>Hex /<br>Index_</h1></header>
+    <div class="container" id="main"></div>
+    <script>
+        const PRE_RENDERED_DATA = DATA_PLACEHOLDER;
+        
+        function render(groups) {
+            const main = document.getElementById('main');
+            let index = 1;
+            for (const cat in groups) {
+                const section = document.createElement('div');
+                section.className = 'section';
+                const formattedIndex = index.toString().padStart(2, '0');
+                section.innerHTML = `
+                    <div class="section-index">// ${formattedIndex}</div>
+                    <div class="section-content">
+                        <h2>${cat}</h2>
+                        <div class="links-grid">
+                            ${groups[cat].map(item => `
+                                <a href="${item.url}" class="link-item" target="_blank">
+                                    <div class="link-header">
+                                        <img src="${item.icon}" class="link-icon" onerror="this.style.opacity=0">
+                                        <span class="link-title">${item.title}</span>
+                                    </div>
+                                    <div class="link-desc">${item.desc}</div>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>`;
+                main.appendChild(section);
+                index++;
+            }
+        }
+        if (PRE_RENDERED_DATA) render(PRE_RENDERED_DATA);
+    </script>
+</body>
+</html>
+"""
 
-    # 3. 序列化数据
-    data_json = json.dumps(groups, ensure_ascii=False)
-    # 构造精确的注入代码
-    new_slot = f'<script>const PRE_RENDERED_DATA = {data_json};</script>'
+# --- 3. 生成并写入文件 ---
+def build():
+    data = get_data()
+    if data is None: return
     
-    # 4. 替换占位符
-    pattern = r'.*?'
-    if not re.search(pattern, content, flags=re.DOTALL):
-        print("Error: DATA_SLOT markers not found in index.html!")
-        return
-
-    new_content = re.sub(pattern, new_slot, content, flags=re.DOTALL)
-
-    # 5. 写回文件
-    with open(FILE_NAME, 'w', encoding='utf-8') as f:
-        f.write(new_content)
+    # 将 JSON 数据注入模板
+    final_html = HTML_TEMPLATE.replace("DATA_PLACEHOLDER", json.dumps(data, ensure_ascii=False))
     
-    print(f"Success! Processed {len(issues)} items into {len(groups)} categories.")
+    with open(FILE_NAME, "w", encoding="utf-8") as f:
+        f.write(final_html)
+    print(f"Success: Processed {len(data)} categories.")
 
 if __name__ == "__main__":
     build()
