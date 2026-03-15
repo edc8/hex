@@ -13,23 +13,17 @@
             --text-dim: #666666;
             --h-height: 120px;
         }
-
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-
         body {
             background-color: var(--bg);
             background-image: 
                 linear-gradient(var(--line) 1px, transparent 1px),
                 linear-gradient(90deg, var(--line) 1px, transparent 1px);
-            background-size: 40px 40px; /* 背景网格 */
+            background-size: 40px 40px;
             color: var(--text-main);
             font-family: 'Space Mono', monospace, "PingFang SC", sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
+            margin: 0; padding: 0; min-height: 100vh;
         }
-
-        /* 顶部导航 */
         header {
             height: var(--h-height);
             display: flex;
@@ -38,7 +32,6 @@
             border-bottom: 1px solid var(--accent);
             margin-bottom: 40px;
         }
-
         header h1 {
             font-size: clamp(24px, 8vw, 40px);
             font-weight: 900;
@@ -46,101 +39,17 @@
             text-transform: uppercase;
             line-height: 0.8;
         }
-
-        .container {
-            padding: 0 20px 100px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* 分类区块 */
-        .section {
-            margin-bottom: 80px;
-            display: grid;
-            grid-template-columns: 60px 1fr; /* 侧边序列号布局 */
-            gap: 20px;
-        }
-
-        .section-index {
-            font-size: 14px;
-            color: var(--accent);
-            font-weight: bold;
-            padding-top: 8px;
-        }
-
-        .section-content h2 {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.3em;
-            color: var(--text-dim);
-            margin: 0 0 30px 0;
-        }
-
-        /* 列表项：彻底去卡片 */
-        .links-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            border-top: 1px solid var(--line);
-        }
-
-        .link-item {
-            display: flex;
-            flex-direction: column;
-            padding: 24px 0;
-            text-decoration: none;
-            color: inherit;
-            border-bottom: 1px solid var(--line);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        /* 手机端点击时背景扩散 */
-        .link-item:active {
-            background: rgba(255, 255, 255, 0.05);
-            padding-left: 10px;
-        }
-
-        .link-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .link-icon {
-            width: 24px;
-            height: 24px;
-            margin-right: 15px;
-            opacity: 0.8;
-            filter: grayscale(1) invert(1); /* 保证在黑底上清晰 */
-        }
-
-        .link-title {
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-
-        .link-desc {
-            font-size: 12px;
-            color: var(--text-dim);
-            line-height: 1.6;
-            max-width: 90%;
-        }
-
-        /* 加载状态 */
-        #loader {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg);
-            z-index: 1000;
-            font-size: 12px;
-            letter-spacing: 5px;
-        }
-
-        /* 响应式微调 */
+        .container { padding: 0 20px 100px; max-width: 1200px; margin: 0 auto; }
+        .section { margin-bottom: 80px; display: grid; grid-template-columns: 60px 1fr; gap: 20px; }
+        .section-index { font-size: 14px; color: var(--accent); font-weight: bold; padding-top: 8px; }
+        .section-content h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.3em; color: var(--text-dim); margin: 0 0 30px 0; }
+        .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); border-top: 1px solid var(--line); }
+        .link-item { display: flex; flex-direction: column; padding: 24px 0; text-decoration: none; color: inherit; border-bottom: 1px solid var(--line); transition: all 0.3s ease; position: relative; }
+        .link-item:active { background: rgba(255, 255, 255, 0.05); padding-left: 10px; }
+        .link-header { display: flex; align-items: center; margin-bottom: 12px; }
+        .link-icon { width: 24px; height: 24px; margin-right: 15px; opacity: 0.8; filter: grayscale(1) invert(1); }
+        .link-title { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+        .link-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; max-width: 90%; }
         @media (max-width: 600px) {
             .section { grid-template-columns: 1fr; gap: 5px; }
             .section-index { font-size: 10px; }
@@ -149,71 +58,22 @@
     </style>
 </head>
 <body>
-
-    <div id="loader">LOADING_SYSTEM...</div>
-
     <header>
         <h1>Hex /<br>Index_</h1>
     </header>
 
-    <div class="container" id="main"></div>
+    <div class="container" id="main">
+        <script>const PRE_RENDERED_DATA = null;</script>
+        </div>
 
     <script>
-        const CFG = { user: 'edc8', repo: 'hex' };
-
-        async function init() {
-            const nodes = [
-                `https://api.github.com/repos/${CFG.user}/${CFG.repo}/issues?state=open`,
-                `https://api.gitmirror.com/repos/${CFG.user}/${CFG.repo}/issues?state=open`
-            ];
-
-            let data = null;
-            for (let url of nodes) {
-                try {
-                    const res = await fetch(url);
-                    if (res.ok) {
-                        data = await res.json();
-                        break;
-                    }
-                } catch (e) {}
-            }
-
-            if (!data) {
-                document.getElementById('loader').innerText = 'LINK_FAILED';
-                return;
-            }
-
-            const groups = {};
-            data.forEach(issue => {
-                const cat = issue.labels[0]?.name || 'MISC';
-                if (!groups[cat]) groups[cat] = [];
-                const lines = issue.body?.split('\n') || [];
-                const url = lines[0]?.trim() || '#';
-                const domain = url.includes('http') ? new URL(url).hostname : '';
-
-                groups[cat].push({
-                    title: issue.title,
-                    url: url,
-                    desc: lines.slice(1).join(' ').trim() || 'NO_DATA_PROVIDED',
-                    icon: domain ? `https://favicon.splitbee.io/?url=${domain}` : 'https://github.githubassets.com/favicons/favicon.svg'
-                });
-            });
-
-            render(groups);
-            document.getElementById('loader').style.display = 'none';
-        }
-
         function render(groups) {
             const main = document.getElementById('main');
             let index = 1;
-
             for (const cat in groups) {
                 const section = document.createElement('div');
                 section.className = 'section';
-                
-                // 格式化索引号为 01, 02...
                 const formattedIndex = index.toString().padStart(2, '0');
-
                 section.innerHTML = `
                     <div class="section-index">// ${formattedIndex}</div>
                     <div class="section-content">
@@ -235,8 +95,7 @@
                 index++;
             }
         }
-
-        init();
+        if (PRE_RENDERED_DATA) render(PRE_RENDERED_DATA);
     </script>
 </body>
 </html>
