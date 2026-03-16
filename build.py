@@ -1,44 +1,56 @@
 import requests
 import json
+import os
 from urllib.parse import urlparse
 
 # --- 基础配置 ---
 USER = "edc8"
 REPO = "hex"
 FILE_NAME = "index.html"
+# 从 GitHub Actions 的环境变量中获取 Token
+TOKEN = os.getenv("GITHUB_TOKEN")
 
-# --- 1. 获取 Issue 数据 ---
 def fetch_issues():
+    headers = {"Authorization": f"token {TOKEN}"} if TOKEN else {}
+    # 增加每页数量到 100
     url = f"https://api.github.com/repos/{USER}/{REPO}/issues?state=open&per_page=100"
-    res = requests.get(url)
-    if res.status_code != 200: return None
     
-    issues = res.json()
-    groups = {}
-    for issue in issues:
-        if "pull_request" in issue: continue
-        # 获取分类标签
-        cat = issue['labels'][0]['name'] if (issue.get('labels')) else 'MISC'
-        if cat not in groups: groups[cat] = []
+    try:
+        res = requests.get(url, headers=headers)
+        if res.status_code != 200:
+            print(f"Error: API returned {res.status_code}")
+            return None
         
-        # 提取链接和描述 (Issue 第一行为链接，后面为描述)
-        body_parts = (issue.get('body') or "").split('\n')
-        link = body_parts[0].strip() if body_parts else "#"
-        desc = " ".join(body_parts[1:]).strip() or "No description provided."
-        
-        # 自动获取图标
-        domain = urlparse(link).netloc if "http" in link else ""
-        icon = f"https://favicon.splitbee.io/?url={domain}" if domain else ""
+        issues = res.json()
+        groups = {}
+        for issue in issues:
+            if "pull_request" in issue: continue
+            
+            # 获取分类标签
+            cat = issue['labels'][0]['name'] if (issue.get('labels')) else 'MISC'
+            if cat not in groups: groups[cat] = []
+            
+            # 提取链接和描述
+            body = issue.get('body') or ""
+            body_parts = body.split('\n')
+            link = body_parts[0].strip() if body_parts else "#"
+            desc = " ".join(body_parts[1:]).strip() or "No description provided."
+            
+            # 自动获取图标
+            domain = urlparse(link).netloc if "http" in link else ""
+            icon = f"https://favicon.splitbee.io/?url={domain}" if domain else ""
 
-        groups[cat].append({
-            "title": issue['title'],
-            "url": link,
-            "desc": desc,
-            "icon": icon
-        })
-    return groups
+            groups[cat].append({
+                "title": issue['title'],
+                "url": link,
+                "desc": desc,
+                "icon": icon
+            })
+        return groups
+    except Exception as e:
+        print(f"Exception: {e}")
+        return None
 
-# --- 2. 这里的样式和你原来的完全一致 ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -58,6 +70,7 @@ HTML_TEMPLATE = """
         .section-content h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.3em; color: var(--text-dim); margin: 0 0 30px 0; }
         .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); border-top: 1px solid var(--line); }
         .link-item { display: flex; flex-direction: column; padding: 24px 0; text-decoration: none; color: inherit; border-bottom: 1px solid var(--line); transition: all 0.3s ease; }
+        .link-item:hover { opacity: 0.7; }
         .link-header { display: flex; align-items: center; margin-bottom: 12px; }
         .link-icon { width: 24px; height: 24px; margin-right: 15px; filter: grayscale(1) invert(1); }
         .link-title { font-size: 18px; font-weight: 600; }
@@ -85,12 +98,10 @@ HTML_TEMPLATE = """
 </html>
 """
 
-# --- 3. 写入文件 ---
 if __name__ == "__main__":
     data = fetch_issues()
     if data:
-        # 直接生成新的 HTML，不再去老文件里找占位符
         final_html = HTML_TEMPLATE.replace("DATA_PLACEHOLDER", json.dumps(data, ensure_ascii=False))
         with open(FILE_NAME, "w", encoding="utf-8") as f:
             f.write(final_html)
-        print("Done!")
+        print("Successfully generated index.html")
