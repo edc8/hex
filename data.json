@@ -1,0 +1,106 @@
+{
+  "MISC": [
+    {
+      "title": "测试",
+      "url": "[www.baidu.[ocm](url)",
+      "desc": "暂无描述",
+      "icon": ""
+    }
+  ],
+  "YouTube技术类": [
+    {
+      "title": "测试",
+      "url": "[www.baiud.com](url)",
+      "desc": "暂无描述",
+      "icon": ""
+    },
+    {
+      "title": "up主博客",
+      "url": "https://lovetoshare.top/",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=lovetoshare.top"
+    },
+    {
+      "title": "up主博客",
+      "url": "https://naiyous.com/",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=naiyous.com"
+    },
+    {
+      "title": "up主博客",
+      "url": "https://kjgx668.blogspot.com",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=kjgx668.blogspot.com"
+    },
+    {
+      "title": " up主博客",
+      "url": "https://github.com/yonggekkk",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=github.com"
+    }
+  ],
+  "系统类": [
+    {
+      "title": "一款 纯净的系统重装工具",
+      "url": "[https://sysre.cn/](url)",
+      "desc": "暂无描述",
+      "icon": ""
+    }
+  ],
+  "影视类": [
+    {
+      "title": "ghs",
+      "url": "https://live.suancaihu.eu.org/",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=live.suancaihu.eu.org"
+    },
+    {
+      "title": "TV盒子",
+      "url": "https://www.juwanhezi.com/",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=www.juwanhezi.com"
+    },
+    {
+      "title": "耐看发布页",
+      "url": "https://nkvlog.us/",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=nkvlog.us"
+    }
+  ],
+  "魔法网络类": [
+    {
+      "title": "每日节点",
+      "url": "https://github.com/barry-far/V2ray-Config",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=github.com"
+    },
+    {
+      "title": "233脚本",
+      "url": "https://github.com/233boy",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=github.com"
+    },
+    {
+      "title": "v2APK",
+      "url": "https://github.com/2dust/v2rayNG/releases",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=github.com"
+    }
+  ],
+  "视频提取类": [
+    {
+      "title": "抖音视频解析",
+      "url": "https://www.aifooler.com/",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=www.aifooler.com"
+    }
+  ],
+  "办公类": [
+    {
+      "title": "文档转换",
+      "url": "https://cdkm.com/cn/",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=cdkm.com"
+    }
+  ]
+}
