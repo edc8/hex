@@ -1,44 +1,4 @@
 {
-  "MISC": [
-    {
-      "title": "测试",
-      "url": "[www.baidu.com](url)",
-      "desc": "暂无描述",
-      "icon": ""
-    }
-  ],
-  "YouTube技术类": [
-    {
-      "title": "测试",
-      "url": "[www.baiud.com](url)",
-      "desc": "暂无描述",
-      "icon": ""
-    },
-    {
-      "title": "up主博客",
-      "url": "https://lovetoshare.top/",
-      "desc": "暂无描述",
-      "icon": "https://favicon.splitbee.io/?url=lovetoshare.top"
-    },
-    {
-      "title": "up主博客",
-      "url": "https://naiyous.com/",
-      "desc": "暂无描述",
-      "icon": "https://favicon.splitbee.io/?url=naiyous.com"
-    },
-    {
-      "title": "up主博客",
-      "url": "https://kjgx668.blogspot.com",
-      "desc": "暂无描述",
-      "icon": "https://favicon.splitbee.io/?url=kjgx668.blogspot.com"
-    },
-    {
-      "title": " up主博客",
-      "url": "https://github.com/yonggekkk",
-      "desc": "暂无描述",
-      "icon": "https://favicon.splitbee.io/?url=github.com"
-    }
-  ],
   "系统类": [
     {
       "title": "一款 纯净的系统重装工具",
@@ -83,6 +43,32 @@
     {
       "title": "v2APK",
       "url": "https://github.com/2dust/v2rayNG/releases",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=github.com"
+    }
+  ],
+  "YouTube技术类": [
+    {
+      "title": "up主博客",
+      "url": "https://lovetoshare.top/",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=lovetoshare.top"
+    },
+    {
+      "title": "up主博客",
+      "url": "https://naiyous.com/",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=naiyous.com"
+    },
+    {
+      "title": "up主博客",
+      "url": "https://kjgx668.blogspot.com",
+      "desc": "暂无描述",
+      "icon": "https://favicon.splitbee.io/?url=kjgx668.blogspot.com"
+    },
+    {
+      "title": " up主博客",
+      "url": "https://github.com/yonggekkk",
       "desc": "暂无描述",
       "icon": "https://favicon.splitbee.io/?url=github.com"
     }
